@@ -115,8 +115,13 @@ function fieldNameFallback(fields: Set<string>) {
       );
     };
   } else if (fields.has('Time') || fields.has('time')) {
+    // Only the legacy time field itself may match; other time-typed fields (e.g. "created") must not be swept up
     fallback = (field: Field, frame: DataFrame) => {
-      return frame.meta?.typeVersion == null && field.type === FieldType.time;
+      return (
+        frame.meta?.typeVersion == null &&
+        field.type === FieldType.time &&
+        (field.name === 'Time' || field.name === 'time')
+      );
     };
   }
 
